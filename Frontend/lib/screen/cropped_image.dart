@@ -9,9 +9,7 @@ class Cropped extends StatefulWidget {
   String selectedSubject;
   String selectedTerm;
   String selectedExam;
-  String selectedName;
-  String selectedRollNumber;
-  Cropped({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm, required this.selectedName, required this.selectedRollNumber});
+  Cropped({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm});
 
   @override
   State<Cropped> createState() => _CroppedState();
@@ -73,7 +71,7 @@ class _CroppedState extends State<Cropped> {
                     // }
                     // print('12');
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => NumberGridPage(str: widget.str, selectedExam: widget.selectedExam, selectedSubject: widget.selectedSubject, selectedTerm: widget.selectedTerm, selectedName: widget.selectedName, selectedRollNumber: widget.selectedRollNumber), settings: RouteSettings(
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => NumberGridPage(str: widget.str, selectedExam: widget.selectedExam, selectedSubject: widget.selectedSubject, selectedTerm: widget.selectedTerm), settings: RouteSettings(
                       arguments: data,
                     )));
                   }),

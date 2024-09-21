@@ -25,13 +25,13 @@ async def home():
     
     predictor = Pm.Predict()
     pre = await predictor.execute()
-    
 
 
     with open("10_perspective_corrected.jpg", "rb") as imagefile:
         convert = base64.b64encode(imagefile.read())
 
     pre['image'] = convert.decode()
+    pre['rollnum'] = '21ucs152'
     json_object = json.dumps(pre) 
 
     return json_object

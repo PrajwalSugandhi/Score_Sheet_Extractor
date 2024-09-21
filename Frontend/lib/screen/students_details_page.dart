@@ -22,10 +22,6 @@ class StudentPersonalDetailsPage extends StatefulWidget {
 }
 
 class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController rollNoController = TextEditingController();
-  String selectedName = '';
-  String selectedRollNumber = '';
   late File selected_image;
   bool _loading = false;
   var image;
@@ -38,7 +34,7 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
     setState(() {
       _loading = true;
     });
-    String url = 'http://192.168.1.4:5000';
+    String url = 'http://192.168.19.152:5000';
     final response = await http.post(
       Uri.parse(url),
       body: jsonEncode(
@@ -60,13 +56,13 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
     print(respond);
   }
 
-  void _showErrorDialog() {
+  void _showErrorDialog(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Error'),
-          content: Text('Please fill all the fields'),
+          content: Text(message),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -110,68 +106,33 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ),
-          ) :Padding(
+          ) : Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: TextStyle(color: Colors.white),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                  ),
-                  style: TextStyle(color: Colors.white),
-                ),
-                SizedBox(height: 20.0),
-                TextFormField(
-                  controller: rollNoController,
-                  decoration: InputDecoration(
-                    labelText: 'Roll No',
-                    labelStyle: TextStyle(color: Colors.white),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                  ),
-                  style: TextStyle(color: Colors.white),
-                ),
-                SizedBox(height: 20.0),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    if(nameController.text.trim().isEmpty || rollNoController.text.trim().isEmpty){
-                      _showErrorDialog();
-                    }
-                    else{
-                      await pickImagefromCamera();
-                      setState(() {
-                        _loading = false;
-                        selectedRollNumber = rollNoController.text.toString();
-                        selectedName = nameController.text.toString();
-                      });
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute( builder: (context) => Cropped(str: respond, selectedExam: widget.selectedExam, selectedSubject: widget.selectedSubject, selectedTerm: widget.selectedTerm, selectedName: selectedName, selectedRollNumber: selectedRollNumber),
-                              settings: RouteSettings(
-                                arguments: respond,
-                              )
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                try{
+                  await pickImagefromCamera();
+                  setState(() {
+                    _loading = false;
+                  });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute( builder: (context) => Cropped(str: respond, selectedExam: widget.selectedExam, selectedSubject: widget.selectedSubject, selectedTerm: widget.selectedTerm),
+                          settings: RouteSettings(
+                            arguments: respond,
+                          )
+                      ));
+                }
+                catch(e){
+                  setState(() {
+                    _loading = false;
+                  });
+                  _showErrorDialog('Some Error occurred. Please try again');
+                }
 
-                          ));
-                    }
-
-                  },
-                  icon: Icon(Icons.camera_alt),
-                  label: Text('Take Photo'),
-                ),
-              ],
+              },
+              icon: Icon(Icons.camera_alt),
+              label: Text('Take Photo'),
             ),
           ),
         ),

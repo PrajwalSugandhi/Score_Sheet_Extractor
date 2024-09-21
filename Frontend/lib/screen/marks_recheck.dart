@@ -51,10 +51,8 @@ class NumberGridPage extends StatefulWidget {
   String selectedSubject;
   String selectedTerm;
   String selectedExam;
-  String selectedName;
-  String selectedRollNumber;
 
-  NumberGridPage({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm, required this.selectedName, required this.selectedRollNumber});
+  NumberGridPage({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm});
 
   @override
   _NumberGridPageState createState() => _NumberGridPageState();
@@ -99,10 +97,10 @@ class _NumberGridPageState extends State<NumberGridPage> {
     sheet.getRangeByIndex(1, 14).setText("Total Marks");
 
     sheet.getRangeByIndex(2, 1).setText("1.");
-    sheet.getRangeByIndex(2, 2).setText(widget.selectedName);
-    sheet.getRangeByIndex(2, 3).setText(widget.selectedRollNumber);
+    sheet.getRangeByIndex(2, 2).setText('To be done');
+    sheet.getRangeByIndex(2, 3).setText(widget.str['rollnum'].toString());
     for (var i = 4; i < 15; i++) {
-      sheet.getRangeByIndex(2, i).setText(controllers[i - 4].text.toString());
+      sheet.getRangeByIndex(2, i).setText(controllers[i - 3].text.toString());
     }
   }
 
@@ -120,9 +118,9 @@ class _NumberGridPageState extends State<NumberGridPage> {
 
   xcel.Workbook workbook = xcel.Workbook();
 
-  final List<TextEditingController> controllers = List.generate(11, (index) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(12, (index) => TextEditingController());
 
-  List<String> textshown = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Total Marks'];
+  List<String> textshown = ['Roll Number', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Total Marks'];
 
   @override
   void initState() {
@@ -136,16 +134,15 @@ class _NumberGridPageState extends State<NumberGridPage> {
     //   }
     // }
     var tr = 0;
-    for(var i = 1; i < widget.str.length - 1; i++){
-      controllers[i-1].text = widget.str['$i'].toString();
+    controllers[0].text = widget.str['rollnum'].toString();
+    for(var i = 1; i < widget.str.length - 2; i++){
+      controllers[i].text = widget.str['$i'].toString();
       tr++;
     }
-    for(var i = tr; i<10; i++){
+    for(var i = tr+1; i<11; i++){
       controllers[i].text = '0';
     }
-    controllers[10].text = widget.str['${tr+1}'].toString();
-
-
+    controllers[11].text = widget.str['${tr+1}'].toString();
   }
 
   @override
@@ -181,7 +178,7 @@ class _NumberGridPageState extends State<NumberGridPage> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(11, (index) {
+              children: List.generate(12, (index) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
