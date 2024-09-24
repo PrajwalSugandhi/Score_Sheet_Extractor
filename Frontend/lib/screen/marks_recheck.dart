@@ -1,9 +1,11 @@
-import 'package:btp/screen/home_page.dart';
+import 'package:btp/models/common_details.dart';
+import 'package:btp/provider/sheet_details.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
@@ -46,19 +48,16 @@ class FileStorage {
   }
 }
 
-class NumberGridPage extends StatefulWidget {
+class NumberGridPage extends ConsumerStatefulWidget {
   final Map<dynamic, dynamic> str;
-  String selectedSubject;
-  String selectedTerm;
-  String selectedExam;
 
-  NumberGridPage({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm});
+  NumberGridPage({super.key, required this.str});
 
   @override
-  _NumberGridPageState createState() => _NumberGridPageState();
+  ConsumerState<NumberGridPage> createState() => _NumberGridPageState();
 }
 
-class _NumberGridPageState extends State<NumberGridPage> {
+class _NumberGridPageState extends ConsumerState<NumberGridPage> {
   void _showSuccessMessageAndNavigate() async {
     await showDialog(
       context: context,
@@ -109,7 +108,7 @@ class _NumberGridPageState extends State<NumberGridPage> {
     Uint8List uint8list = Uint8List.fromList(bytes);
 
     // Save the file
-    await FileStorage.writeCounter(uint8list, "${widget.selectedSubject}_${widget.selectedTerm}_${widget.selectedExam}.xlsx");
+    await FileStorage.writeCounter(uint8list, "${commondetails.subject}_${commondetails.session}_${commondetails.examType}.xlsx");
     workbook.dispose();
 
     // Show success message and navigate after saving
@@ -117,7 +116,7 @@ class _NumberGridPageState extends State<NumberGridPage> {
   }
 
   xcel.Workbook workbook = xcel.Workbook();
-
+  late Details commondetails;
   final List<TextEditingController> controllers = List.generate(12, (index) => TextEditingController());
 
   List<String> textshown = ['Roll Number', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Total Marks'];
@@ -147,6 +146,7 @@ class _NumberGridPageState extends State<NumberGridPage> {
 
   @override
   Widget build(BuildContext context) {
+    commondetails = ref.watch(commonDetailsProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,

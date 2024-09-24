@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:btp/models/button.dart';
-import 'package:btp/models/textfield.dart';
 import 'package:btp/screen/cropped_image.dart';
 import 'package:btp/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +8,17 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 
-class StudentPersonalDetailsPage extends StatefulWidget {
-  String selectedSubject;
-  String selectedTerm;
-  String selectedExam;
+import '../helper/error_shower.dart';
 
-  StudentPersonalDetailsPage(
-      {required this.selectedExam,
-      required this.selectedSubject,
-      required this.selectedTerm,
-      super.key});
+class StudentPersonalDetailsPage extends StatefulWidget {
+  StudentPersonalDetailsPage({super.key});
 
   @override
   State<StudentPersonalDetailsPage> createState() =>
       _StudentPersonalDetailsPageState();
 }
 
-class _StudentPersonalDetailsPageState
-    extends State<StudentPersonalDetailsPage> {
+class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage> {
   late File selected_image;
   bool _loading = false;
   var image;
@@ -49,7 +40,7 @@ class _StudentPersonalDetailsPageState
     setState(() {
       _loading = true;
     });
-    String url = 'http://192.168.19.152:5000';
+    String url = 'http://192.168.19.204:5000';
     final response = await http.post(
       Uri.parse(url),
       body: jsonEncode(
@@ -69,26 +60,6 @@ class _StudentPersonalDetailsPageState
       respond = data;
     });
     print(respond);
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   String _picture = "";
@@ -166,16 +137,16 @@ class _StudentPersonalDetailsPageState
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Cropped(
-                                    str: respond,
-                                    selectedExam: widget.selectedExam,
-                                    selectedSubject: widget.selectedSubject,
-                                    selectedTerm: widget.selectedTerm)));
+                                    str: respond)));
                       } catch (e) {
                         setState(() {
                           _loading = false;
                         });
-                        _showErrorDialog(
-                            'Some Error occurred. Please try again');
+
+                        CustomErrorShower.showErrorDialog(
+                            context: context,
+                            title: 'Error',
+                            message: 'Some Error occurred. Please try again');
                       }
                     },
                     icon: Icon(Icons.camera_alt),

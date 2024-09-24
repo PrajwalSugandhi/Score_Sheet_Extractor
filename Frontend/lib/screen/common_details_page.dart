@@ -1,40 +1,25 @@
 import 'dart:core';
+import 'package:btp/helper/error_shower.dart';
+import 'package:btp/models/common_details.dart';
+import 'package:btp/provider/sheet_details.dart';
 import 'package:flutter/material.dart';
 import 'package:btp/screen/students_details_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DetailsPage extends StatefulWidget {
+class DetailsPage extends ConsumerStatefulWidget {
   @override
-  State<DetailsPage> createState() => _DetailsPageState();
+  ConsumerState<DetailsPage> createState() => _DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
+
+class _DetailsPageState extends ConsumerState<DetailsPage> {
   final TextEditingController textController = TextEditingController();
 
   String dropdownValue1 = '2023-24 II';
   String dropdownValue2 = 'Mid-term';
   String selectedSubject = '';
   List<String> termList = ['2023-24 I', '2023-24 II'];
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('Please enter a subject.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+  late Details currentDetails;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,15 +158,14 @@ class _DetailsPageState extends State<DetailsPage> {
                         selectedSubject = textController.text.toString();
                       });
                       if (textController.text.trim().isEmpty) {
-                        _showErrorDialog();
+                        CustomErrorShower.showErrorDialog(context: context, title: 'Error', message: 'Please fill all the details');
                       } else {
+                        currentDetails = Details(session: dropdownValue1, subject: selectedSubject, examType: dropdownValue2);
+                        ref.read(commonDetailsProvider.notifier).updateDetails(details: currentDetails);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => StudentPersonalDetailsPage(
-                                  selectedExam: dropdownValue2,
-                                  selectedSubject: selectedSubject,
-                                  selectedTerm: dropdownValue1)),
+                              builder: (context) => StudentPersonalDetailsPage()),
                         );
                       }
                     },

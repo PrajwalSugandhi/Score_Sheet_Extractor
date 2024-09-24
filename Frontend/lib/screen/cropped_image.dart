@@ -1,20 +1,12 @@
 import 'dart:convert';
-
-import 'package:btp/models/button.dart';
 import 'package:btp/screen/marks_recheck.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/button.dart';
+
 class Cropped extends StatefulWidget {
   final Map<dynamic, dynamic> str;
-  String selectedSubject;
-  String selectedTerm;
-  String selectedExam;
-  Cropped(
-      {super.key,
-      required this.str,
-      required this.selectedExam,
-      required this.selectedSubject,
-      required this.selectedTerm});
+  Cropped({super.key, required this.str});
 
   @override
   State<Cropped> createState() => _CroppedState();
@@ -84,11 +76,7 @@ class _CroppedState extends State<Cropped> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NumberGridPage(
-                                  str: widget.str,
-                                  selectedExam: widget.selectedExam,
-                                  selectedSubject: widget.selectedSubject,
-                                  selectedTerm: widget.selectedTerm)));
+                              builder: (context) => NumberGridPage(str: widget.str)));
                     }),
               ],
             ),
