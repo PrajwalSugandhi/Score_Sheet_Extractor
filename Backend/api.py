@@ -22,7 +22,7 @@ async def home():
         f.write(imgdata)
 
     m.Crop()
-    
+
     predictor = Pm.Predict()
     pre = await predictor.execute()
 
@@ -31,7 +31,6 @@ async def home():
         convert = base64.b64encode(imagefile.read())
 
     pre['image'] = convert.decode()
-    pre['rollnum'] = '21ucs152'
     json_object = json.dumps(pre) 
 
     return json_object

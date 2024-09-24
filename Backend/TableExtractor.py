@@ -133,5 +133,5 @@ class TableExtractor:
         return rect
     
     def store_process_image(self, file_name, image):
-        path = "E:/Smart Score/Backend/" + file_name
+        path = file_name
         cv2.imwrite(path, image)

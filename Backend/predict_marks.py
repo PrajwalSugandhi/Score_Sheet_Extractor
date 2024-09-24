@@ -17,6 +17,7 @@ class Predict :
     async def execute(self):
         self.resize()
         dict = self.predict()
+        dict['rollnum'] = self.predictroll()
         print(dict)
         # print('a')
         return dict
@@ -177,3 +178,40 @@ class Predict :
         # json_data = json.dumps(data_dict, indent=4)
         # self.delete_file_from_github(image_path, github_repo, github_username, github_token)
         return data_dict
+    
+
+    def predictroll(self):
+
+        image_path = 'cropped_roll.jpg'
+        github_repo = 'Images'
+        github_username = 'PrajwalSugandhi'
+        github_token = os.getenv("GITHUBAPI_KEY")
+        self.upload_image_to_github(image_path, github_repo, github_username, github_token)
+
+        params = {
+        "engine": "google_lens",
+        "url": f'https://raw.githubusercontent.com/PrajwalSugandhi/Images/main/{image_path}',
+        "api_key": "85960b673dae026b19f8718b6f4ede3a3109d0353f7d222b94f0414c71634f7f"
+        }
+
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        roll=""
+        flag=0
+        count=0
+        # print(results)
+        try:
+            for i in range(0,len(results['text_results'])):
+                if(count>8):
+                    break
+                num=results['text_results'][i]['text']
+                # print(results['text_results'][i]['text'])
+                if(num[0].isdigit()):
+                    flag=1
+                if(flag):
+                    roll+=num
+                    count+=1
+        except Exception as e:
+            print(e)
+            
+        return roll

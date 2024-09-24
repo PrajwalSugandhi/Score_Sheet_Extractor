@@ -9,19 +9,21 @@ class Cropped extends StatefulWidget {
   String selectedSubject;
   String selectedTerm;
   String selectedExam;
-  Cropped({super.key, required this.str, required this.selectedExam, required this.selectedSubject, required this.selectedTerm});
+  Cropped(
+      {super.key,
+      required this.str,
+      required this.selectedExam,
+      required this.selectedSubject,
+      required this.selectedTerm});
 
   @override
   State<Cropped> createState() => _CroppedState();
 }
 
 class _CroppedState extends State<Cropped> {
-
   @override
   Widget build(BuildContext context) {
-    final data = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>;
     return Scaffold(
-
       // appBar: AppBar(
       //   elevation: 1.7,
       //   shadowColor: Colors.black12,
@@ -49,39 +51,49 @@ class _CroppedState extends State<Cropped> {
       // ),
       backgroundColor: Color(0xff131621),
       body: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 40,),
-              Padding(
-                padding: const EdgeInsets.all(35.0),
-                child: Image.memory(base64Decode(widget.str['image'])),
-              ),
-              SizedBox(height: 14,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Button(value: 'Retake Image', function: (){
-                    Navigator.pop(context);
-                  }),
-                  Button(value: 'Next', function: (){
-                    //print(widget.str);
-                    // for(var i = 0; i<11; i++){
-                    //   print('Value- ');
-                    //   print(widget.str['$i']);
-                    // }
-                    // print('12');
+        child: Column(
+          children: [
+            SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(35.0),
+              child: Image.memory(base64Decode(widget.str['image'])),
+            ),
+            SizedBox(
+              height: 14,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Button(
+                    value: 'Retake Image',
+                    function: () {
+                      Navigator.pop(context);
+                    }),
+                Button(
+                    value: 'Next',
+                    function: () {
+                      //print(widget.str);
+                      // for(var i = 0; i<11; i++){
+                      //   print('Value- ');
+                      //   print(widget.str['$i']);
+                      // }
+                      // print('12');
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => NumberGridPage(str: widget.str, selectedExam: widget.selectedExam, selectedSubject: widget.selectedSubject, selectedTerm: widget.selectedTerm), settings: RouteSettings(
-                      arguments: data,
-                    )));
-                  }),
-                ],
-              ),
-
-
-
-            ],
-          ),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NumberGridPage(
+                                  str: widget.str,
+                                  selectedExam: widget.selectedExam,
+                                  selectedSubject: widget.selectedSubject,
+                                  selectedTerm: widget.selectedTerm)));
+                    }),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

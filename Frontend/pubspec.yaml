@@ -57,6 +57,7 @@ dev_dependencies:
   path_provider:
   permission_handler:
   flutter_svg: ^2.0.10+1
+  cunning_document_scanner: ^1.2.3
 #  google_sign_in:
 #  googleapis:
 #  googleapis_auth:
