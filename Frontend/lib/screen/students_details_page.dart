@@ -1,28 +1,33 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:btp/screen/cropped_image.dart';
+import 'package:btp/controller/image_sender.dart';
+import 'package:btp/models/student_data.dart';
+import 'package:btp/provider/sheet_details.dart';
+import 'package:btp/screen/table_image.dart';
 import 'package:btp/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import '../helper/dialog.dart';
 
-import '../helper/error_shower.dart';
-
-class StudentPersonalDetailsPage extends StatefulWidget {
+class StudentPersonalDetailsPage extends ConsumerStatefulWidget {
   StudentPersonalDetailsPage({super.key});
 
   @override
-  State<StudentPersonalDetailsPage> createState() =>
+  ConsumerState<StudentPersonalDetailsPage> createState() =>
       _StudentPersonalDetailsPageState();
 }
 
-class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage> {
+class _StudentPersonalDetailsPageState extends ConsumerState<StudentPersonalDetailsPage> {
   late File selected_image;
   bool _loading = false;
   var image;
-  late Map<dynamic, dynamic> respond;
+  late StudentData currStudentData;
+  String _picture = "";
+  String detectedImage = "";
 
   @override
   void initState() {
@@ -33,37 +38,7 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {}
 
-  Future sendImage() async {
-    // final returnedimage = await ImagePicker().pickImage(source: ImageSource.camera);
-    // selected_image = File(returnedimage!.path);
-    // String base64Image = base64Encode(selected_image.readAsBytesSync());
-    setState(() {
-      _loading = true;
-    });
-    String url = 'http://192.168.19.204:5000';
-    final response = await http.post(
-      Uri.parse(url),
-      body: jsonEncode(
-        {
-          'image': detected_image,
-        },
-      ),
-      headers: {'Content-Type': "application/json"},
-    );
 
-    final Map<dynamic, dynamic> data = json.decode(response.body);
-
-    // print(data);
-    // print('StatusCode : ${response.statusCode}');
-    // print('Return Data : ${response.body}');
-    setState(() {
-      respond = data;
-    });
-    print(respond);
-  }
-
-  String _picture = "";
-  String detected_image = "";
 
   Future<void> cropimage() async {
     List<String> pictures;
@@ -73,20 +48,17 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
       print("here");
       if (!mounted) return;
 
-      // Update the picture path
-
       _picture = pictures[0];
 
       print('before byte me converted');
-      // Convert the image to Base64
+
       final bytes = await File(_picture).readAsBytes();
       print('byte me converted');
       String base64Image = base64Encode(bytes); // Encode the bytes to Base64
       setState(() {
-        detected_image = base64Image;
+        detectedImage = base64Image;
       });
-      // Log the Base64 string for debugging
-      // print("Base64 Image: $base64Image");
+
     } catch (exception) {
       // Handle exception here
       print("Camera problem");
@@ -94,18 +66,50 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
     }
   }
 
+  Future<void> imageClick() async {
+    try {
+      await cropimage();
+      print('photo vala tak ho gaya');
+      setState(() {
+        _loading = true;
+      });
+      await ImageSender.sendImage(detectedImage: detectedImage, ref: ref);
+      print('http request success');
+      setState(() {
+        _loading = false;
+      });
+      if(!mounted){
+        return;
+      }
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Cropped()));
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      print("complete process ki error");
+      print(e);
+      Messenger.showPopUp(
+          context: context,
+          title: 'Error',
+          message: 'Some Error occurred. Please try again');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student Details'),
-        iconTheme: IconThemeData(color: Colors.white),
+        title: const Text('Student Details'),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black87,
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 23),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 23),
       ),
       body: Container(
         // color: Color(0xff131621),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             colors: [Colors.black, Color.fromARGB(255, 0, 20, 153)],
             radius: 1.5,
@@ -115,7 +119,7 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
           child: _loading
               ? Container(
                   color: Colors.black.withOpacity(0.5),
-                  child: Center(
+                  child: const Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
@@ -124,33 +128,9 @@ class _StudentPersonalDetailsPageState extends State<StudentPersonalDetailsPage>
               : Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton.icon(
-                    onPressed: () async {
-                      try {
-                        await cropimage();
-                        print('photo vala tak ho gaya');
-                        await sendImage();
-                        print('http request success');
-                        setState(() {
-                          _loading = false;
-                        });
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Cropped(
-                                    str: respond)));
-                      } catch (e) {
-                        setState(() {
-                          _loading = false;
-                        });
-
-                        CustomErrorShower.showErrorDialog(
-                            context: context,
-                            title: 'Error',
-                            message: 'Some Error occurred. Please try again');
-                      }
-                    },
-                    icon: Icon(Icons.camera_alt),
-                    label: Text('Take Photo'),
+                    onPressed: imageClick,
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Take Photo'),
                   ),
                 ),
         ),

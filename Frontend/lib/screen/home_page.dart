@@ -46,41 +46,31 @@ class _HomePageState extends State<HomePage> {
               automaticallyImplyLeading: false,
               // elevation: 2,
               shadowColor: Colors.black12,
-              backgroundColor: Color(0xff091254),
+              backgroundColor: const Color(0xff091254),
               leadingWidth: 40,
               leading: Container(), // Remove the existing leading
               actions: [
                 // SizedBox(width: 10), // Add some spacing
                 leadingWidget, // Display the user's profile photo
-                SizedBox(width: 10), // Add some spacing
+                const SizedBox(width: 10), // Add some spacing
               ],
             ),
             body: Container(
               height: double.infinity,
               width: double.infinity,
               // color: Colors.blue,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   colors: [Colors.black, Color.fromARGB(255, 0, 20, 153)],
                   radius: 1.5,
                 ),
               ),
-              // decoration: const BoxDecoration(
-              //   gradient: LinearGradient(
-              //     begin: Alignment.topCenter,
-              //     end: Alignment.bottomCenter,
-              //     colors: [Colors.blue, Color(0xff0001AD)],
-              //   ),
-              // ),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 60,),
-                    Center(child: _buildCard(context, 'assets/images/excel.jpg', 'Create New Excel Sheet', 1)),
-                    SizedBox(height: 25,),
-                    Center(child: _buildCard(context, 'assets/images/excel.jpg', 'Update existing Excel Sheet', 2)),
-                    //_buildCard(context, 'assets/images/ex2.png', 'Create Excel Sheet'),
+                    const SizedBox(height: 60,),
+                    Center(child: _buildCard(context, 'assets/images/excel.jpg', 'Create New Excel Sheet')),
                   ],
                 ),
               ),
@@ -91,17 +81,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String path, String cardData, int i) {
+  Widget _buildCard(BuildContext context, String path, String cardData) {
     return GestureDetector(
       onTap: () {
-        if (i == 1) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => DetailsPage()),
           );
-        } else {
-          _showErrorDialog();
-        }
+
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
@@ -131,11 +118,11 @@ class _HomePageState extends State<HomePage> {
                     left: 0,
                     right: 0,
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         cardData,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -159,24 +146,5 @@ class _HomePageState extends State<HomePage> {
       return user.photoURL;
     }
     return null;
-  }
-
-  void _showErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('To be added'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

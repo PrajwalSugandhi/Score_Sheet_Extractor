@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomErrorShower{
-  static void showErrorDialog({required BuildContext context, required String title, required String message}) {
+class Messenger{
+  static void showPopUp({required BuildContext context, required String title, required String message, int number = 1}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -11,7 +11,8 @@ class CustomErrorShower{
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= number);
               },
               child: Text('OK'),
             ),

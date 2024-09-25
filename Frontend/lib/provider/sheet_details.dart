@@ -31,10 +31,31 @@ class StudentDetailsNotifier extends StateNotifier<List<StudentData>>{
   void deleteAll(){
     state = [];
   }
+
+  void showAll(){
+    print(state);
+  }
 }
 
 
 final studentDetailsProvider = StateNotifierProvider<StudentDetailsNotifier,List<StudentData>>( (ref) => StudentDetailsNotifier());
+
+
+
+class CurrStudentDetailsNotifier extends StateNotifier<StudentData>{
+  CurrStudentDetailsNotifier() : super(StudentData.defaultCons());
+
+  void updateStudent({required data}){
+    state = data;
+  }
+
+  void delete(){
+    state = StudentData.defaultCons();
+  }
+}
+
+
+final currStudentDetailsProvider = StateNotifierProvider<CurrStudentDetailsNotifier,StudentData>( (ref) => CurrStudentDetailsNotifier());
 
 
 

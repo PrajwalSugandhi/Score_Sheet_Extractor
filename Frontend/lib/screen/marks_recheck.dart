@@ -1,158 +1,81 @@
+import 'package:btp/controller/excel_operations.dart';
+import 'package:btp/helper/dialog.dart';
 import 'package:btp/models/common_details.dart';
+import 'package:btp/models/student_data.dart';
 import 'package:btp/provider/sheet_details.dart';
 import 'package:flutter/material.dart';
-import 'dart:io' as io;
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
-
-class FileStorage {
-  static Future<String> getExternalDocumentPath() async {
-    // To check whether permission is given for this app or not.
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not, we will ask for permission first
-      await Permission.storage.request();
-    }
-
-    io.Directory _directory;
-    if (io.Platform.isAndroid) {
-      // Redirects it to the download folder in Android
-      _directory = io.Directory("/storage/emulated/0/Download");
-    } else {
-      _directory = await getApplicationDocumentsDirectory();
-    }
-
-    final exPath = _directory.path;
-    print("Saved Path: $exPath");
-    await io.Directory(exPath).create(recursive: true);
-    return exPath;
-  }
-
-  static Future<String> get _localPath async {
-    final String directory = await getExternalDocumentPath();
-    return directory;
-  }
-
-  static Future<File> writeCounter(Uint8List bytes, String name) async {
-    final path = await _localPath;
-    File file = File('$path/$name');
-    print("Save file");
-
-    // Write the data in the file you have created
-    return file.writeAsBytes(bytes);
-  }
-}
 
 class NumberGridPage extends ConsumerStatefulWidget {
-  final Map<dynamic, dynamic> str;
-
-  NumberGridPage({super.key, required this.str});
+  NumberGridPage({super.key});
 
   @override
   ConsumerState<NumberGridPage> createState() => _NumberGridPageState();
 }
 
 class _NumberGridPageState extends ConsumerState<NumberGridPage> {
-  void _showSuccessMessageAndNavigate() async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Successful'),
-          content: Text('Excel is successfully downloaded in the downloads folder of phone'),
-            actions: <Widget>[
-            TextButton(
-            onPressed: () {
-              int count = 0;
-              Navigator.of(context).popUntil((_) => count++ >= 5);
-            },
-            child: Text('OK'),
-        ),
-        ]
-        );
-      },
-    );
+  late StudentData currStudentDetails;
 
-
-
-    // Navigate to the home page
-
-  }
-
-  void addToExcel() {
-    final xcel.Worksheet sheet = workbook.worksheets[0];
-    sheet.getRangeByIndex(1, 1).setText("S. No.");
-    sheet.getRangeByIndex(1, 2).setText("Name");
-    sheet.getRangeByIndex(1, 3).setText("Roll Number");
-
-    for (var i = 1; i < 11; i++) {
-      sheet.getRangeByIndex(1, i + 3).setText('Q $i');
-    }
-    sheet.getRangeByIndex(1, 14).setText("Total Marks");
-
-    sheet.getRangeByIndex(2, 1).setText("1.");
-    sheet.getRangeByIndex(2, 2).setText('To be done');
-    sheet.getRangeByIndex(2, 3).setText(widget.str['rollnum'].toString());
-    for (var i = 4; i < 15; i++) {
-      sheet.getRangeByIndex(2, i).setText(controllers[i - 3].text.toString());
-    }
-  }
-
-  void saveExcel() async {
-    final List<int> bytes = workbook.saveAsStream();
-    Uint8List uint8list = Uint8List.fromList(bytes);
-
-    // Save the file
-    await FileStorage.writeCounter(uint8list, "${commondetails.subject}_${commondetails.session}_${commondetails.examType}.xlsx");
-    workbook.dispose();
-
-    // Show success message and navigate after saving
-    _showSuccessMessageAndNavigate();
-  }
-
-  xcel.Workbook workbook = xcel.Workbook();
-  late Details commondetails;
-  final List<TextEditingController> controllers = List.generate(12, (index) => TextEditingController());
-
-  List<String> textshown = ['Roll Number', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Total Marks'];
+  late Details commonDetails;
+  final List<TextEditingController> controllers =
+      List.generate(12, (index) => TextEditingController());
+  List<String> textshown = [
+    'Roll Number',
+    'Q1',
+    'Q2',
+    'Q3',
+    'Q4',
+    'Q5',
+    'Q6',
+    'Q7',
+    'Q8',
+    'Q9',
+    'Q10',
+    'Total Marks'
+  ];
 
   @override
   void initState() {
     super.initState();
-    print(widget.str);
-    // for (var i = 0; i < 11; i++) {
-    //   if (!widget.str.containsKey('${i + 1}')) {
-    //     controllers[i].text = '0';
-    //   } else {
-    //     controllers[i].text = widget.str['${i+1}'].toString();
-    //   }
-    // }
-    var tr = 0;
-    controllers[0].text = widget.str['rollnum'].toString();
-    for(var i = 1; i < widget.str.length - 2; i++){
-      controllers[i].text = widget.str['$i'].toString();
-      tr++;
+    for (var i = 0; i < 12; i++) {
+      controllers[i].text = "Loading";
     }
-    for(var i = tr+1; i<11; i++){
-      controllers[i].text = '0';
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    currStudentDetails = ref.watch(currStudentDetailsProvider);
+    commonDetails = ref.watch(commonDetailsProvider);
+
+    controllers[0].text = currStudentDetails.rollnum;
+    for (var i = 1; i < 11; i++) {
+      controllers[i].text = currStudentDetails.questionMarks[i];
     }
-    controllers[11].text = widget.str['${tr+1}'].toString();
+    controllers[11].text = currStudentDetails.totalMarks;
+  }
+
+  updateDetails(){
+    currStudentDetails.updateData(controllers);
+    ref.read(studentDetailsProvider.notifier).addStudent(data: currStudentDetails);
+  }
+
+  void takeMoreImage() {
+    updateDetails();
+    int count = 0;
+    Navigator.of(context).popUntil((_) => count++ >= 2);
   }
 
   @override
   Widget build(BuildContext context) {
-    commondetails = ref.watch(commonDetailsProvider);
+    commonDetails = ref.watch(commonDetailsProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        iconTheme: IconThemeData(
-            color: Colors.white
-        ),
+        iconTheme: IconThemeData(color: Colors.white),
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 23,
@@ -167,13 +90,6 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
       ),
       body: Container(
         color: Color(0xff131621),
-        // decoration: BoxDecoration(
-        //   gradient: LinearGradient(
-        //     begin: Alignment.topCenter,
-        //     end: Alignment.bottomCenter,
-        //     colors: [Colors.blue, Colors.black],
-        //   ),
-        // ),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -225,7 +141,6 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                         ],
                       ),
                       child: TextFormField(
-
                         textAlign: TextAlign.center,
                         controller: controllers[index],
                         decoration: InputDecoration(
@@ -253,19 +168,44 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
         color: Color(0xff131621),
         child: Padding(
           padding: EdgeInsets.all(10),
-          child: ElevatedButton(
-            onPressed: () {
-              addToExcel();
-              saveExcel();
-            },
-            child: Text(
-              'Add to Excel',
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+          child: Row(
+            children: [
+              ElevatedButton(
+                onPressed: takeMoreImage,
+                child: const Text(
+                  'Add More Image',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
               ),
-            ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  updateDetails();
+                  ExcelOperation.addToExcel(ref);
+                  ref.read(studentDetailsProvider.notifier).deleteAll();
+                  ref.read(currStudentDetailsProvider.notifier).delete();
+                  Messenger.showPopUp(
+                    context: context,
+                    title: 'Successful',
+                    message:
+                        'Excel is successfully downloaded in the downloads folder of phone',
+                    number: 5,
+                  );
+                },
+                child: Text(
+                  'Add to Excel',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,5 +1,5 @@
 import 'dart:core';
-import 'package:btp/helper/error_shower.dart';
+import 'package:btp/helper/dialog.dart';
 import 'package:btp/models/common_details.dart';
 import 'package:btp/provider/sheet_details.dart';
 import 'package:flutter/material.dart';
@@ -15,22 +15,22 @@ class DetailsPage extends ConsumerStatefulWidget {
 class _DetailsPageState extends ConsumerState<DetailsPage> {
   final TextEditingController textController = TextEditingController();
 
-  String dropdownValue1 = '2023-24 II';
+  String dropdownValue1 = '2024-25 I';
   String dropdownValue2 = 'Mid-term';
   String selectedSubject = '';
-  List<String> termList = ['2023-24 I', '2023-24 II'];
+  List<String> termList = ['2024-25 I', '2023-24 II', '2023-24 I'];
   late Details currentDetails;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text('Exam Details'),
+        title: const Text('Exam Details'),
         backgroundColor: Colors.black,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white
         ),
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 23,
         ),
@@ -39,7 +39,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
         height: double.infinity,
         width: double.infinity,
         // color: Color(0xff131621),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             colors: [Colors.black, Color.fromARGB(255, 0, 20, 153)],
             radius: 1.5,
@@ -53,14 +53,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: TextFormField(
                       controller: textController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Subject',
                         labelStyle: TextStyle(color: Colors.white),
                         enabledBorder: OutlineInputBorder(
@@ -70,10 +70,10 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                           borderSide: BorderSide(color: Colors.white),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: Container(
@@ -83,12 +83,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                       child: Row(
                         children: [
-                          SizedBox(width: 10),
-                          Text(
-                            'Term:',
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Session:',
                             style: TextStyle(color: Colors.white),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           DropdownButton<String>(
                             value: dropdownValue1,
                             onChanged: (String? newValue) {
@@ -99,7 +99,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                               });
                             },
                             dropdownColor: Colors.blue,
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                             items: termList
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
@@ -112,7 +112,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: Container(
@@ -122,12 +122,12 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                       child: Row(
                         children: [
-                          SizedBox(width: 10),
-                          Text(
-                            'Exam:',
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Exam Type:',
                             style: TextStyle(color: Colors.white),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           DropdownButton<String>(
                             value: dropdownValue2,
                             onChanged: (String? newValue) {
@@ -138,7 +138,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                               });
                             },
                             dropdownColor: Colors.blue,
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                             items: <String>['Mid-term', 'Endterm']
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
@@ -151,14 +151,14 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
                         selectedSubject = textController.text.toString();
                       });
                       if (textController.text.trim().isEmpty) {
-                        CustomErrorShower.showErrorDialog(context: context, title: 'Error', message: 'Please fill all the details');
+                        Messenger.showPopUp(context: context, title: 'Error', message: 'Please fill all the details');
                       } else {
                         currentDetails = Details(session: dropdownValue1, subject: selectedSubject, examType: dropdownValue2);
                         ref.read(commonDetailsProvider.notifier).updateDetails(details: currentDetails);
@@ -169,7 +169,7 @@ class _DetailsPageState extends ConsumerState<DetailsPage> {
                         );
                       }
                     },
-                    child: Text('Next'),
+                    child: const Text('Next'),
                   ),
                 ],
               ),

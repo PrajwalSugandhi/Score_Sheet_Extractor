@@ -18,8 +18,8 @@ void main() async {
   );
 
   runApp(
-      ProviderScope(
-        child: const MaterialApp(
+      const ProviderScope(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
           home: AuthenticationScreen(),
         ),
