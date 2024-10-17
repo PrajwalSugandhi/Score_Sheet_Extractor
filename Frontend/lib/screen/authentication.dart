@@ -2,12 +2,8 @@ import 'dart:ui';
 
 import 'package:btp/controller/auth.dart';
 import 'package:btp/helper/uibox.dart';
-import 'package:btp/screen/home_page.dart';
-import 'package:flutter/material.dart';
-import 'package:sign_in_button/sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sign_in_button/sign_in_button.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({Key? key}) : super(key: key);
@@ -19,7 +15,7 @@ class AuthenticationScreen extends StatefulWidget {
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  User? _user;
+  // User? _user;
 
   void signout() {
     setState(() {
@@ -33,7 +29,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     super.initState();
     auth.authStateChanges().listen((event) {
       setState(() {
-        _user = event;
+        // _user = event;
       });
     });
   }

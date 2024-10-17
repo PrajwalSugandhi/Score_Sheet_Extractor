@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   sign_in_button: ^3.2.0
   flutter_riverpod: ^2.5.1
+  mysql_client: ^0.0.27
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -49,8 +51,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  image_picker: ^1.0.5
-  flython: ^0.2.0
+#  image_picker: ^1.0.5
   http: ^1.1.2
   firebase_core:
   firebase_auth:
@@ -78,6 +79,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

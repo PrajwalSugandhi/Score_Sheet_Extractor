@@ -1,12 +1,11 @@
 import 'dart:ui';
+import 'package:btp/screen/admin.dart';
 import 'package:btp/screen/common_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.auth}) : super(key: key);
+  const HomePage({Key? key, required this.auth}) : super(key: key);
   final FirebaseAuth auth;
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,20 +13,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<String?> _photoUrlFuture;
+  bool isAdmin = false;
+
+  void checkIfAdmin() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      IdTokenResult idTokenResult = await user.getIdTokenResult(true);
+      if (idTokenResult.claims != null &&
+          idTokenResult.claims!['admin'] == true) {
+        isAdmin = true;
+        // print("True hone tha $isAdmin");
+        setState(() {
+          isAdmin = true;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    checkIfAdmin();
     _photoUrlFuture = _getUserPhotoUrl();
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(isAdmin);
     return FutureBuilder<String?>(
       future: _photoUrlFuture,
       builder: (context, snapshot) {
         Widget leadingWidget;
-        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
           leadingWidget = CircleAvatar(
             backgroundImage: NetworkImage(snapshot.data!),
           );
@@ -48,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               shadowColor: Colors.black12,
               backgroundColor: const Color(0xff091254),
               leadingWidth: 40,
-              leading: Container(), // Remove the existing leading
+              // leading: Container(), // Remove the existing leading
               actions: [
                 // SizedBox(width: 10), // Add some spacing
                 leadingWidget, // Display the user's profile photo
@@ -69,8 +87,25 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 60,),
-                    Center(child: _buildCard(context, 'assets/images/excel.jpg', 'Create New Excel Sheet')),
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    Center(
+                        child: _buildCard(
+                            context: context,
+                            path: 'assets/images/excel.jpg',
+                            cardData: 'Create New Excel Sheet',
+                            Page: DetailsPage())),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    if (isAdmin)
+                      Center(
+                          child: _buildCard(
+                              context: context,
+                              path: 'assets/images/adminlogo.png',
+                              cardData: 'Access Admin Controls',
+                              Page: Admin())),
                   ],
                 ),
               ),
@@ -81,18 +116,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String path, String cardData) {
+  Widget _buildCard(
+      {required BuildContext context,
+      required String path,
+      required String cardData,
+      required var Page}) {
     return GestureDetector(
       onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DetailsPage()),
-          );
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Page),
+        );
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        height: MediaQuery.of(context).size.height * 0.25, // Height set to 25% of screen height
+        height: MediaQuery.of(context).size.height *
+            0.25, // Height set to 25% of screen height
         margin: const EdgeInsets.symmetric(vertical: 10),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
@@ -103,7 +142,8 @@ class _HomePageState extends State<HomePage> {
             ), // Applying blur effect
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3), // Greyish tint with opacity
+                color:
+                    Colors.grey.withOpacity(0.3), // Greyish tint with opacity
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Stack(
@@ -138,7 +178,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   Future<String?> _getUserPhotoUrl() async {
     User? user = FirebaseAuth.instance.currentUser;

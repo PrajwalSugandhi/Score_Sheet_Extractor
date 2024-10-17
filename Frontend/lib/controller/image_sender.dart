@@ -11,29 +11,25 @@ class ImageSender{
     //   _loading = true;
     // });
     print('image bhejne vala he');
-    String url = 'http://192.168.1.9:5000';
-    try{
-      final response = await http.post(
-        Uri.parse(url),
-        body: jsonEncode(
-          {
-            'image': detectedImage,
-          },
-        ),
-        headers: {'Content-Type': "application/json"},
-      );
+    String url = 'http://172.22.30.161:5000';
+    final response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode(
+        {
+          'image': detectedImage,
+        },
+      ),
+      headers: {'Content-Type': "application/json"},
+    );
 
-      final Map<dynamic, dynamic> data = json.decode(response.body);
-      final StudentData studentData = StudentData.mapToClass(data);
-      print('data aa gaya server se');
-      print(data);
-      print(studentData.image);
-      ref.read(currStudentDetailsProvider.notifier).updateStudent(data: studentData);
-      print(data);
-    }
-    catch(error){
-      print("error aayi he kuch during api sending");
-      print(error);
-    }
+    final Map<dynamic, dynamic> data = json.decode(response.body);
+    final StudentData studentData = StudentData.mapToClass(data);
+    print('data aa gaya server se');
+    print(data);
+    print(studentData.image);
+    ref.read(currStudentDetailsProvider.notifier).updateStudent(data: studentData);
+    print(data);
+
+
   }
 }

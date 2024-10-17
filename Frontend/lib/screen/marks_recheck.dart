@@ -16,7 +16,6 @@ class NumberGridPage extends ConsumerStatefulWidget {
 
 class _NumberGridPageState extends ConsumerState<NumberGridPage> {
   late StudentData currStudentDetails;
-
   late Details commonDetails;
   final List<TextEditingController> controllers =
       List.generate(12, (index) => TextEditingController());
@@ -75,21 +74,21 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,
-        iconTheme: IconThemeData(color: Colors.white),
-        titleTextStyle: TextStyle(
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 23,
         ),
-        title: Text('Confirm Marks'),
+        title: const Text('Confirm Marks'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
       body: Container(
-        color: Color(0xff131621),
+        color: const Color(0xff131621),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -99,7 +98,7 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
                       width: 140,
                       height: 50,
                       decoration: BoxDecoration(
@@ -109,14 +108,14 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.5),
                             blurRadius: 10,
-                            offset: Offset(0, 0),
+                            offset: const Offset(0, 0),
                           ),
                         ],
                       ),
                       child: Center(
                         child: Text(
                           textshown[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -124,9 +123,9 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Container(
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       width: 140,
                       height: 50,
                       decoration: BoxDecoration(
@@ -136,18 +135,18 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.5),
                             blurRadius: 10,
-                            offset: Offset(0, 0),
+                            offset: const Offset(0, 0),
                           ),
                         ],
                       ),
                       child: TextFormField(
                         textAlign: TextAlign.center,
                         controller: controllers[index],
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.zero,
                         ),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -165,9 +164,9 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: Color(0xff131621),
+        color: const Color(0xff131621),
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Row(
             children: [
               ElevatedButton(
@@ -196,7 +195,7 @@ class _NumberGridPageState extends ConsumerState<NumberGridPage> {
                     number: 5,
                   );
                 },
-                child: Text(
+                child: const Text(
                   'Add to Excel',
                   style: TextStyle(
                     color: Colors.black87,

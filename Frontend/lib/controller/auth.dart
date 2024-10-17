@@ -16,6 +16,7 @@ class AuthCalls{
                 auth: auth,
               )));
     } catch (error) {
+      // print("sohum is here");
       print(error);
     }
   }

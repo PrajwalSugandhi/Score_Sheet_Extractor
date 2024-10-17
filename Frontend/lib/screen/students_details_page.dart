@@ -2,14 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:btp/controller/image_sender.dart';
 import 'package:btp/models/student_data.dart';
-import 'package:btp/provider/sheet_details.dart';
-import 'package:btp/screen/table_image.dart';
-import 'package:btp/screen/splash_screen.dart';
+import 'package:btp/screen/image_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import '../helper/dialog.dart';
 
@@ -60,6 +56,9 @@ class _StudentPersonalDetailsPageState extends ConsumerState<StudentPersonalDeta
       });
 
     } catch (exception) {
+      setState(() {
+        _loading = false;
+      });
       // Handle exception here
       print("Camera problem");
       print(exception);
@@ -84,7 +83,7 @@ class _StudentPersonalDetailsPageState extends ConsumerState<StudentPersonalDeta
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Cropped()));
+              builder: (context) => ImagePreview()));
     } catch (e) {
       setState(() {
         _loading = false;

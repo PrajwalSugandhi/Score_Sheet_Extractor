@@ -20,12 +20,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
         children: [
           Text(
             widget.label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           DropdownButton<String>(
             value: widget.selected,
             onChanged: (String? newValue) {

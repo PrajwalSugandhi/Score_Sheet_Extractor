@@ -1,4 +1,8 @@
 Backend/.env
+Backend/admin-control/service-account-key.json
+Backend/admin-control/.env
+Backend/admin-control/node_modules
+
 
 # Miscellaneous
 *.class
@@ -11,6 +15,7 @@ Frontend/.buildlog/
 Frontend/.history
 Frontend/.svn/
 Frontend/migrate_working_dir/
+Frontend/.env
 
 # IntelliJ related
 *.iml

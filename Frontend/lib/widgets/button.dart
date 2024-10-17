@@ -21,12 +21,12 @@ class _ButtonState extends State<Button> {
             widget.function();
           },
           style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0), // Set the border radius here
               ),
             ),
-            backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff1F75FE)),
+            backgroundColor: const WidgetStatePropertyAll<Color>(Color(0xff1F75FE)),
           ),
           child: Text(
             widget.value,
