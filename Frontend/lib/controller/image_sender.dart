@@ -11,7 +11,7 @@ class ImageSender{
     //   _loading = true;
     // });
     print('image bhejne vala he');
-    String url = 'http://172.22.30.161:5000';
+    String url = 'http://192.168.235.204:5000';
     final response = await http.post(
       Uri.parse(url),
       body: jsonEncode(
@@ -29,7 +29,5 @@ class ImageSender{
     print(studentData.image);
     ref.read(currStudentDetailsProvider.notifier).updateStudent(data: studentData);
     print(data);
-
-
   }
 }

@@ -105,7 +105,7 @@ class Messenger{
                   name = await Database.getData(context, rollNumController.text.toString());
                   Navigator.of(context).pop();
                   if(name != null){
-                    showPopUp(context: context, title: 'Information', message: "The name of student whose Roll Number is ${rollNumController.text} is $name");
+                    showPopUp(context: context, title: 'Information', message: "Roll Number :- ${rollNumController.text} \nName :- $name");
                   }
                 } else {
                   showSnackBar(context: context, message: 'Please fill in both fields');

@@ -12,7 +12,14 @@ class DetailsPage extends ConsumerStatefulWidget {
 }
 
 
+
 class _DetailsPageState extends ConsumerState<DetailsPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(StoredData.curroperation);
+  }
   final TextEditingController textController = TextEditingController();
 
   String dropdownValue1 = '2024-25 I';

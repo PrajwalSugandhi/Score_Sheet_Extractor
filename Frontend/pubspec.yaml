@@ -40,6 +40,8 @@ dependencies:
   flutter_riverpod: ^2.5.1
   mysql_client: ^0.0.27
   flutter_dotenv: ^5.2.1
+  file_picker:
+  excel:
 
 dev_dependencies:
   flutter_test:

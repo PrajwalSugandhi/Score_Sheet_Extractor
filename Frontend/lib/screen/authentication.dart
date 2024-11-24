@@ -17,11 +17,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   // User? _user;
 
-  void signout() {
-    setState(() {
-      auth.signOut();
-    });
-  }
+
 
   @override
   void initState() {

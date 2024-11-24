@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:btp/provider/sheet_details.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' as io;
 import 'package:path_provider/path_provider.dart';
+import 'package:excel/excel.dart';
 
 
 class FileStorage {
@@ -41,4 +44,28 @@ class FileStorage {
     // Write the data in the file you have created
     return file.writeAsBytes(bytes);
   }
+
+  static Future<Excel?> uploadExcel() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx'],
+    );
+
+    if(result == null) {
+        return null;
+    }
+
+    // Step 2: Read the Excel file bytes
+    final file = File(result.files.single.path!);
+    final bytes = file.readAsBytesSync();
+    final fileName = result.files.single.name;
+    StoredData.fileName = fileName;
+
+      // Step 3: Load the Excel file from bytes into an Excel object
+    var excel = Excel.decodeBytes(bytes);
+
+    return excel;
+  }
+
+
 }

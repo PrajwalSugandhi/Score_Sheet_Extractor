@@ -1,19 +1,27 @@
 import 'dart:ui';
+import 'package:btp/controller/auth.dart';
+import 'package:btp/controller/excel_operations.dart';
+import 'package:btp/controller/filestorage.dart';
+import 'package:btp/provider/sheet_details.dart';
 import 'package:btp/screen/admin.dart';
+import 'package:btp/screen/authentication.dart';
 import 'package:btp/screen/common_details_page.dart';
+import 'package:btp/screen/students_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key, required this.auth}) : super(key: key);
   final FirebaseAuth auth;
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   late Future<String?> _photoUrlFuture;
   bool isAdmin = false;
+  var sheet;
 
   void checkIfAdmin() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -58,16 +66,22 @@ class _HomePageState extends State<HomePage> {
 
         return Container(
           child: Scaffold(
-            // backgroundColor: Color(0xff131621),
-            // Set the desired background color
             appBar: AppBar(
               automaticallyImplyLeading: false,
               // elevation: 2,
               shadowColor: Colors.black12,
               backgroundColor: const Color(0xff091254),
               leadingWidth: 40,
+              leading: IconButton(
+                icon: Icon(Icons.exit_to_app, color: Colors.white,),
+                onPressed: (){
+                  AuthCalls.signout();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AuthenticationScreen()));
+                },
+              ),
               // leading: Container(), // Remove the existing leading
               actions: [
+
                 // SizedBox(width: 10), // Add some spacing
                 leadingWidget, // Display the user's profile photo
                 const SizedBox(width: 10), // Add some spacing
@@ -76,7 +90,7 @@ class _HomePageState extends State<HomePage> {
             body: Container(
               height: double.infinity,
               width: double.infinity,
-              // color: Colors.blue,
+
               decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   colors: [Colors.black, Color.fromARGB(255, 0, 20, 153)],
@@ -95,7 +109,34 @@ class _HomePageState extends State<HomePage> {
                             context: context,
                             path: 'assets/images/excel.jpg',
                             cardData: 'Create New Excel Sheet',
-                            Page: DetailsPage())),
+                            onTap: () {
+
+                              StoredData.curroperation = Operation.createNew;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DetailsPage()),
+                              );
+                            },)),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(
+                        child: _buildCard(
+                            context: context,
+                            path: 'assets/images/excel.jpg',
+                            cardData: 'Upload Excel Sheet',
+                            onTap: () async {
+                              sheet = await FileStorage.uploadExcel();
+                              if(sheet != null){
+                                ref.read(uploadedExcelProvider.notifier).updateSheet(data: sheet!);
+                                StoredData.curroperation = Operation.uploadOld;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => StudentPersonalDetailsPage()),
+                                );
+                              }
+                            },
+                            )),
                     const SizedBox(
                       height: 30,
                     ),
@@ -105,7 +146,13 @@ class _HomePageState extends State<HomePage> {
                               context: context,
                               path: 'assets/images/adminlogo.png',
                               cardData: 'Access Admin Controls',
-                              Page: Admin())),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Admin()),
+                                );
+                              },
+                              )),
                   ],
                 ),
               ),
@@ -116,18 +163,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCard(
-      {required BuildContext context,
-      required String path,
-      required String cardData,
-      required var Page}) {
+  Widget _buildCard({required BuildContext context, required String path, required String cardData,required Function()? onTap}) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Page),
-        );
-      },
+      onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height *

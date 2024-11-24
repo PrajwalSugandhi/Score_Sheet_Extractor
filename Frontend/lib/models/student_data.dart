@@ -18,7 +18,6 @@ class StudentData{
 
   StudentData.mapToClass(Map<dynamic, dynamic> data){
     rollnum = data['rollnum'];
-    name = "To be added";
     var tr = 0;
     for(var i = 1; i < data.length - 2; i++){
       questionMarks[i] = data['$i'].toString();
@@ -28,8 +27,9 @@ class StudentData{
     image = data['image'];
   }
 
-  void updateData(List<TextEditingController> controllers){
+  void updateData(List<TextEditingController> controllers, TextEditingController nameController){
     rollnum = controllers[0].text.toString();
+    name = nameController.text.toString();
     for(var i = 1; i< 11; i++){
       questionMarks[i] = controllers[i].text.toString();
     }
